@@ -1,20 +1,15 @@
 # TheProtagonistBot
 
-[![Reddit User Karma](https://img.shields.io/reddit/user-karma/combined/TheProtagonistBot?style=social)](https://reddit.com/user/TheProtagonistBot)
+[![Reddit User Karma](https://img.shields.io/reddit/user-karma/combined/RaymondHoltBot?style=social)](https://reddit.com/user/RaymondHoltBot)
 
-Simple replay bot for the Protagonist character of Tenet movie by Christopher Nolan.
+Simple replay bot for the Captain/Deputy Commissioner Raymond Jacob Holt character of Brooklyn Nine-Nine TV Show.
 
-Reddit's user for the bot is [u/TheProtagonistBot](https://www.reddit.com/user/TheProtagonistBot/).
+Reddit's user for the bot is [u/TheProtagonistBot](https://www.reddit.com/user/RaymondHoltBot/).
 
 Bot is mainly active in
-the [![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/tenet?style=social)](https://www.reddit.com/r/tenet)
+the [![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/tenet?style=social)](https://www.reddit.com/r/brooklynninenine)
 subreddit.
 
 Currently, bot is powered using
 **Python 3.9.1** and the **[praw](https://praw.readthedocs.io/en/latest/)** library which is running in a free tier
 heroku dyno.
-
-The bot use two types of quotes, [one](https://github.com/yamin8000/tenet_bot/blob/master/quotes_dict)
-is called a dictionary where if certain trigger words are in the original comment then a relevant quote is replied
-[other one](https://github.com/yamin8000/tenet_bot/blob/master/quotes_list)
-is just a list of quotes that if trigger words are not found then a random comment is replied.
