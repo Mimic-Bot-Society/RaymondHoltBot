@@ -11,5 +11,5 @@ the [![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscriber
 subreddit.
 
 Currently, bot is powered using
-**Python 3.10.0** and the **[praw](https://praw.readthedocs.io/en/latest/)** library which is running in a free tier
+**Python 3.10.6** and the **[praw](https://praw.readthedocs.io/en/latest/)** library which is running in a free tier
 heroku dyno.
