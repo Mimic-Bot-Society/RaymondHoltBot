@@ -10,9 +10,9 @@ import psycopg2
 from colorama import init, Fore, Style
 from praw.exceptions import RedditAPIException
 
-reply_rate_limit_sleep = 5
+reply_rate_limit_sleep = 10
 
-general_rate_limit_sleep = 0.5
+general_rate_limit_sleep = 2
 
 
 def read_file_contents(_file_name):
@@ -61,7 +61,7 @@ def handle_comment(_comment):
     handle_single_comment(_comment, 0)
     if len(replies) > 0:
         for comment_replay in replies:
-            time.sleep(general_rate_limit_sleep)
+            time.sleep(random.randint(1, general_rate_limit_sleep))
             handle_comment(comment_replay)
 
 
@@ -86,12 +86,10 @@ def get_database_url():
 
 
 def handle_rate_limit_exception(_message, _comment):
-    if "Take a break" in _message:
-        seconds = calculate_break_time(_message)
-
-        print(f"Rate limit exception, sleeping for {seconds} seconds then retrying!")
-        thread = threading.Thread(target=handle_single_comment, args=(_comment, seconds,))
-        thread.start()
+    seconds = calculate_break_time(_message)
+    print(f"Rate limit exception, sleeping for {seconds} seconds then retrying!")
+    thread = threading.Thread(target=handle_single_comment, args=(_comment, seconds,))
+    thread.start()
 
 
 def calculate_break_time(_message):
@@ -188,6 +186,6 @@ subs = reddit.subreddit(get_allowed_subs())
 
 print(f"{Fore.YELLOW}Getting comments...{Style.RESET_ALL}")
 for comment in subs.stream.comments():
-    time.sleep(general_rate_limit_sleep)
+    time.sleep(random.randint(1, general_rate_limit_sleep))
     comment.refresh()
     handle_comment(comment)
