@@ -48,6 +48,8 @@ def get_random_quote():
 
 def get_matched_quote(_comment_body):
     trigger = next((tag for tag in (map(lambda item: item['trigger'], triggers)) if tag in _comment_body), None)
+    if trigger is None:
+        return get_random_quote()
     trigger_id = next((item for item in triggers if item['trigger'] == trigger), None)['id']
     quote_id = next((item for item in quote_triggers if item['trigger_id'] == trigger_id), None)['quote_id']
     return next((item for item in quotes if item['id'] == quote_id), None)['text']
