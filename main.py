@@ -6,6 +6,7 @@ import re
 from random import randrange
 
 import praw
+import psycopg2
 from colorama import init, Fore, Style
 from praw.exceptions import RedditAPIException
 
@@ -20,27 +21,36 @@ def read_file_contents(_file_name):
     return file_contents
 
 
-def get_quotes_list():
-    return read_file_contents("quotes_list").split("\n")
+def get_quotes():
+    return get_all_from_table("quote")
 
 
-def get_quote_dict():
-    contents = read_file_contents("quotes_dict")
-    lines = contents.split("\n")
-    _quotes_dict = {}
-    for line in lines:
-        if line != "":
-            key, value = line.split(":")
-            _quotes_dict[key] = value
-    return _quotes_dict
+def get_triggers():
+    return get_all_from_table("trigger")
+
+
+def get_quote_triggers():
+    return get_all_from_table("quote_trigger")
+
+
+def get_all_from_table(_table):
+    connection = psycopg2.connect(get_database_url(), sslmode='require')
+    cursor = connection.cursor()
+    cursor.execute(f"select * from {_table}")
+    fields = [field_md[0] for field_md in cursor.description]
+    result = [dict(zip(fields, row)) for row in cursor.fetchall()]
+    return result
 
 
 def get_random_quote():
-    return quotes_list[randrange(0, len(quotes_list))]
+    return quotes[randrange(0, len(quotes))]['text']
 
 
 def get_matched_quote(_comment_body):
-    return next((tag for tag in quotes_dict.keys() if tag in _comment_body), None)
+    trigger = next((tag for tag in (map(lambda item: item['trigger'], triggers)) if tag in _comment_body), None)
+    trigger_id = next((item for item in triggers if item['trigger'] == trigger), None)['id']
+    quote_id = next((item for item in quote_triggers if item['trigger_id'] == trigger_id), None)['quote_id']
+    return next((item for item in quotes if item['id'] == quote_id), None)['text']
 
 
 def handle_comment(_comment):
@@ -67,6 +77,10 @@ def get_trigger_word():
 
 def get_bot_username():
     return os.getenv("username", "TheProtagonistBot")
+
+
+def get_database_url():
+    return os.getenv("DATABASE_URL", "")
 
 
 def handle_rate_limit_exception(_message, _comment):
@@ -114,10 +128,11 @@ def handle_single_comment(_single_comment, _sleep):
             print(f"{Fore.BLUE}{comment_body}")
             print(f"{Fore.YELLOW}###")
             already_replied = is_replied_to_it(_single_comment.replies.list())
+            reply_body = f"Dear {_single_comment.author},\n{reply_body}\nSincerely,\nRaymond Holt"
+            print(f"{Fore.GREEN}Reply:")
+            print(f"{Fore.BLUE}{reply_body}")
             if is_replying() and sub_name in get_allowed_subs().split("+") and not already_replied:
                 print(f"Replying to comment: {_single_comment.id}, Wait...{Style.RESET_ALL}")
-                print(f"{Fore.GREEN}Reply:")
-                print(f"{Fore.BLUE}{reply_body}")
                 time.sleep(random.randint(1, reply_rate_limit_sleep))
                 _single_comment.reply(reply_body)
                 print(f"{Fore.GREEN}Replied to comment.")
@@ -140,7 +155,7 @@ def handle_single_comment(_single_comment, _sleep):
 
 def get_reply_body(comment_body):
     match = get_matched_quote(comment_body)
-    return quotes_dict[match] if match is not None else get_random_quote()
+    return match if match is not None else get_random_quote()
 
 
 init()
@@ -149,8 +164,11 @@ print(f"{Fore.YELLOW}Starting bot...")
 print(f"Trigger word: {Fore.GREEN}{get_trigger_word()}")
 
 print(f"{Fore.YELLOW}Getting quotes...")
-quotes_list = get_quotes_list()
-quotes_dict = get_quote_dict()
+quotes = get_quotes()
+print(f"{Fore.YELLOW}Getting triggers...")
+triggers = get_triggers()
+print(f"{Fore.YELLOW}Getting quote triggers...")
+quote_triggers = get_quote_triggers()
 
 print(f"{Fore.YELLOW}Getting reddit instance... for user: {Fore.GREEN}{get_bot_username()}")
 reddit = praw.Reddit(
