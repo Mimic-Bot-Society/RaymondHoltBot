@@ -131,7 +131,7 @@ def handle_single_comment(_single_comment, _sleep):
             print(f"{Fore.YELLOW}###")
             already_replied = is_replied_to_it(_single_comment.replies.list())
             author = "u/deleted" if _single_comment.author is None else f"u/{_single_comment.author}"
-            reply_body = f"Dear {author},\n\n{reply_body}\n\nSincerely,\n\nRaymond Holt"
+            reply_body = f"Dear {author},  \n{reply_body}  \nSincerely,  \nRaymond Holt"
             print(f"{Fore.GREEN}Reply:")
             print(f"{Fore.BLUE}{reply_body}")
             if is_replying() and sub_name in get_allowed_subs().split("+") and not already_replied:
