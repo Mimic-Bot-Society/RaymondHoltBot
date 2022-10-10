@@ -128,7 +128,8 @@ def handle_single_comment(_single_comment, _sleep):
             print(f"{Fore.BLUE}{comment_body}")
             print(f"{Fore.YELLOW}###")
             already_replied = is_replied_to_it(_single_comment.replies.list())
-            reply_body = f"Dear u/{_single_comment.author},\n{reply_body}\nSincerely,\nRaymond Holt"
+            author = "u/deleted" if _single_comment.author is None else f"u/{_single_comment.author}"
+            reply_body = f"Dear {author},\n{reply_body}\nSincerely,\nRaymond Holt"
             print(f"{Fore.GREEN}Reply:")
             print(f"{Fore.BLUE}{reply_body}")
             if is_replying() and sub_name in get_allowed_subs().split("+") and not already_replied:
@@ -148,7 +149,8 @@ def handle_single_comment(_single_comment, _sleep):
             print(f"{Fore.RED}Reddit API Exception: {Fore.CYAN}{message}{Style.RESET_ALL}")
             handle_rate_limit_exception(message, _single_comment)
         except Exception as e:
-            print(f"{Fore.RED}Failed to reply to comment: {Fore.CYAN}{str(e)}{Style.RESET_ALL}")
+            print(f"{Fore.RED}Failed to reply to comment by {_single_comment.author}{Style.RESET_ALL}")
+            print(f"{Fore.RED}Exception: {Fore.CYAN}{str(e)}")
     else:
         print(f"{Fore.RED}Invalid comment: {Fore.CYAN}{_single_comment.id}{Style.RESET_ALL}")
 
