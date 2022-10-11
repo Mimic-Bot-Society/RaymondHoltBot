@@ -66,23 +66,23 @@ def handle_comment(_comment):
 
 
 def is_replying():
-    return os.getenv("is_replying", False) == "True"
+    return os.getenv("is_replying") == "True"
 
 
 def get_allowed_subs():
-    return os.getenv("allowed_subs", "test")
+    return os.getenv("allowed_subs")
 
 
 def get_trigger_word():
-    return os.getenv("trigger_word", "protagonist")
+    return os.getenv("trigger_word")
 
 
 def get_bot_username():
-    return os.getenv("username", "TheProtagonistBot")
+    return os.getenv("username")
 
 
 def get_database_url():
-    return os.getenv("DATABASE_URL", "")
+    return os.getenv("DATABASE_URL")
 
 
 def handle_rate_limit_exception(_message, _comment):
@@ -122,7 +122,7 @@ def handle_single_comment(_single_comment, _sleep):
     if get_trigger_word() in comment_body and _single_comment.author.name != get_bot_username():
         try:
             reply_body = get_reply_body(comment_body)
-            sub_name = _single_comment.subreddit.display_name
+            sub_name = _single_comment.subreddit.display_name.lower()
             print(f"{Fore.GREEN}Comment:")
             print(f"{Fore.YELLOW}###")
             print(f"{Fore.BLUE}{comment_body}")
